@@ -1,7 +1,7 @@
 package services
 
 import (
-	"fmt"
+	"database/sql"
 	model "hxline/model"
 	repo "hxline/repositories"
 )
@@ -18,6 +18,6 @@ func Delete(id string) {
 	repo.Delete(id)
 }
 
-func Read() {
-	fmt.Println("Read")
+func ReadAllPeople() *sql.Rows {
+	return repo.GetAllPeople()
 }
