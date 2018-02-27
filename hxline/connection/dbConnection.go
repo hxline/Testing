@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Conn() *sql.DB {
+func Conn() (db *sql.DB) {
 	connStr := "user=postgres password=postgres dbname=hxline sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 
@@ -15,7 +15,7 @@ func Conn() *sql.DB {
 		log.Fatal(err)
 	}
 
-	return db
+	return
 }
 
 func CUD(stmt string, args ...interface{}) {
