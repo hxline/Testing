@@ -18,7 +18,7 @@ func Conn() (db *sql.DB) {
 	return
 }
 
-func CUD(stmt string, args ...interface{}) {
+func CUD(stmt string, params ...interface{}) (err error) {
 	db := Conn()
 
 	defer func() {
@@ -26,21 +26,47 @@ func CUD(stmt string, args ...interface{}) {
 		db.Close()
 	}()
 
-	statement, error := db.Prepare(stmt)
-	checkError(error)
+	statement, err := db.Prepare(stmt)
+	checkError(err)
 
-	result, error := statement.Exec(args...)
-	checkError(error)
+	if err != nil {
+		return
+	}
 
-	affectedRow, error := result.RowsAffected()
+	result, err := statement.Exec(params...)
+	checkError(err)
+
+	if err != nil {
+		return
+	}
+
+	affectedRow, err := result.RowsAffected()
 	log.Println(affectedRow, "rows changed")
-	checkError(error)
+	checkError(err)
 
 	log.Println("Success")
+
+	return
+}
+
+func Retrieve(stmt string, params ...interface{}) (result *sql.Rows, err error) {
+	db := Conn()
+
+	defer func() {
+		log.Println("Connection Closed")
+		db.Close()
+	}()
+
+	result, err = db.Query(stmt, params...)
+	checkError(err)
+
+	log.Println("Success")
+
+	return
 }
 
 func checkError(err error) {
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 }
